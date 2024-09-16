@@ -68,7 +68,7 @@ namespace Library.Clinic.Models
                 Console.WriteLine("5. Edit Race");
                 Console.WriteLine("6. Edit Sex");
                 Console.WriteLine("7.Add Diagnosis");
-                Console.WriteLine("8.Add Prescription");
+                Console.WriteLine("8. Add Prescription");
                 Console.WriteLine("9. Exit");
                 Console.WriteLine("Enter your choice: ");
                 int choice = Convert.ToInt32(Console.ReadLine() ?? string.Empty);  // ?? string.Empty is used to avoid null exception
