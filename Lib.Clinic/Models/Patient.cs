@@ -26,6 +26,12 @@ namespace Library.Clinic.Models
 
         public List<Appointment> appointments { get; set; }
 
+        public string Display{
+            get{
+                return $"{ToString()}\n";
+            }
+        }
+
         public Patient(string name, string lastName, string address, DateTime birthdate, string race, string sex, int Id, List<String> diagnoses, List<String> prescriptions, List<Appointment> appointments)
         {
             this.name = name;

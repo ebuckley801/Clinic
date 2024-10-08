@@ -11,5 +11,13 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+    <ShellContent
+        Title="Manage Patients"
+        ContentTemplate="{DataTemplate views:PatientManagement}"
+        Route="Patients" />
+    <ShellContent
+        Title="Patient Details"
+        ContentTemplate="{DataTemplate views:PatientView}"
+        Route="PatientDetails" />
 
 </Shell>
