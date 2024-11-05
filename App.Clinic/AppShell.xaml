@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:App.Clinic"
+    xmlns:views="clr-namespace:App.Clinic.Views"
     Shell.FlyoutBehavior="Disabled"
     Title="App.Clinic">
 
@@ -19,5 +20,12 @@
         Title="Patient Details"
         ContentTemplate="{DataTemplate views:PatientView}"
         Route="PatientDetails" />
-
+    <ShellContent
+    Title="Manage Appointments"
+    ContentTemplate="{DataTemplate views:AppointmentManagementView}"
+    Route="Appointments" />
+    <ShellContent
+        Title="Appointment Details"
+        ContentTemplate="{DataTemplate views:AppointmentView}"
+        Route="AppointmentDetails" />
 </Shell>
