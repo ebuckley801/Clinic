@@ -24,9 +24,13 @@ namespace Library.Clinic.Models
         }
         public int Id { get; set; }
         public string? Name { get; set; }
-        public DateTime Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
         public string? Address { get; set; }
+        public string? Gender { get; set; }
         public string? SSN { get; set; }
+        public DiagnosisEnum[]? Diagnoses { get; set; }
+        public PrescriptionEnum[]? Prescriptions { get; set; }
+
 
 
         public Patient()
@@ -34,7 +38,10 @@ namespace Library.Clinic.Models
             Name = string.Empty;
             Address = string.Empty;
             Birthday = DateTime.MinValue;
+            Gender = string.Empty;
             SSN = string.Empty;
+            Diagnoses = Array.Empty<DiagnosisEnum>();
+            Prescriptions = Array.Empty<PrescriptionEnum>();
         }
 
         public Patient(PatientDTO p)
@@ -43,7 +50,10 @@ namespace Library.Clinic.Models
             Name = p.Name;
             Birthday = p.Birthday;
             Address = p.Address;
+            Gender = p.Gender;
             SSN = p.SSN;
+            Diagnoses = p.Diagnoses;
+            Prescriptions = p.Prescriptions;
         }
     }
 }

@@ -12,4 +12,34 @@ namespace Library.Clinic.Models
         NameAscending,
         NameDescending
     }
+
+    public enum GenderEnum
+    {
+        Male,
+        Female
+    }
+
+    public enum DiagnosisEnum
+    {
+        None,
+        Cold,
+        Flu,
+        Headache,
+        StomachAche,
+        Diabetes, 
+        HighBloodPressure,
+        HeartAttack,
+        KidneyFailure
+    }
+}
+
+public enum PrescriptionEnum
+{
+    None,
+    Aspirin,
+    Ibuprofen,
+    Rub_Some_Dirt_On_It,
+    Avoid_Stress,
+    Tums,
+    Penicillin
 }

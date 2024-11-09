@@ -1,7 +1,9 @@
 using App.Clinic.ViewModels;
 using Library.Clinic.Models;
 using Library.Clinic.Services;
-
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace App.Clinic.Views;
 
@@ -11,7 +13,7 @@ public partial class PatientView : ContentPage
 	public PatientView()
 	{
 		InitializeComponent();
-		
+        BindingContext = new PatientViewModel();
 	}
     public int PatientId { get; set; }
 

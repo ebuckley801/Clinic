@@ -3,14 +3,17 @@ using Library.Clinic.Models;
 using Library.Clinic.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace App.Clinic.ViewModels
 {
-    public class PatientViewModel
+    public class PatientViewModel : INotifyPropertyChanged
     {
         public PatientDTO? Model { get; set; }
         public ICommand? DeleteCommand { get; set; }
@@ -47,6 +50,54 @@ namespace App.Clinic.ViewModels
             }
         }
 
+        public string Address
+        {
+            get => Model?.Address ?? string.Empty;
+            set
+            {
+                if(Model != null)
+                {
+                    Model.Address = value;
+                }
+            }
+        }
+
+        public DateTime? Birthday
+        {
+            get => Model?.Birthday;
+            set
+            {
+                if(Model != null)
+                {
+                    Model.Birthday = value;
+                }
+            }
+        }
+
+        public string Gender
+        {
+            get => Model?.Gender ?? string.Empty;
+            set
+            {
+                if(Model != null)
+                {
+                    Model.Gender = value;
+                }
+            }
+        }
+
+        public string SSN
+        {
+            get => Model?.SSN ?? string.Empty;
+            set
+            {
+                if(Model != null)
+                {
+                    Model.SSN = value;
+                }
+            }
+        }
+
         public void SetupCommands()
         {
             DeleteCommand = new Command(DoDelete);
@@ -74,6 +125,7 @@ namespace App.Clinic.ViewModels
 
         public PatientViewModel()
         {
+
             Model = new PatientDTO();
             SetupCommands();
         }
@@ -95,5 +147,14 @@ namespace App.Clinic.ViewModels
 
             await Shell.Current.GoToAsync("//Patients");
         }
+
+        // INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
+
 }

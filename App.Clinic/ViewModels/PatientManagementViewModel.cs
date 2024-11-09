@@ -6,22 +6,23 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace App.Clinic.ViewModels
 {
-    public class PatientManagementViewModel: INotifyPropertyChanged
+    public class PatientManagementViewModel : INotifyPropertyChanged
     {
-        public PatientManagementViewModel() {
+        public PatientManagementViewModel()
+        {
             SortChoices = new List<SortChoiceEnum>
             {
-               SortChoiceEnum.NameAscending
-              , SortChoiceEnum.NameDescending
+               SortChoiceEnum.NameAscending,
+               SortChoiceEnum.NameDescending
             };
 
             SortChoice = SortChoiceEnum.NameAscending;
+            Query = string.Empty;
         }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
@@ -32,7 +33,8 @@ namespace App.Clinic.ViewModels
         public List<SortChoiceEnum> SortChoices { get; set; }
 
         private SortChoiceEnum sortChoice;
-        public SortChoiceEnum SortChoice { 
+        public SortChoiceEnum SortChoice
+        { 
             get
             {
                 return sortChoice;
@@ -42,46 +44,59 @@ namespace App.Clinic.ViewModels
                 if (sortChoice != value)
                 {
                     sortChoice = value;
-                    NotifyPropertyChanged("Patients");
+                    NotifyPropertyChanged(nameof(Patients));
+                }
+            }
+        }
+
+        private string query = string.Empty;
+        public string Query 
+        { 
+            get => query; 
+            set
+            {
+                if (query != value)
+                {
+                    query = value;
+                    NotifyPropertyChanged(nameof(Patients));
                 }
             }
         }
 
         public PatientViewModel? SelectedPatient { get; set; }
-        public string? Query { get; set; }
         public ObservableCollection<PatientViewModel> Patients
         {
             get
             {
+                var currentQuery = Query.ToUpper();
+
                 var retVal = new ObservableCollection<PatientViewModel>(
                     PatientServiceProxy
                     .Current
                     .Patients
-                    .Where(p=>p != null)
-                    .Where(p => p.Name?.ToUpper().Contains(Query?.ToUpper() ?? string.Empty) ?? false)
+                    .Where(p => p != null)
+                    .Where(p => p.Name.ToUpper().Contains(currentQuery))
                     .Select(p => new PatientViewModel(p))
-                    );
+                );
 
-                if(SortChoice == SortChoiceEnum.NameAscending)
+                if (SortChoice == SortChoiceEnum.NameAscending)
                 {
-                    return
-                        new ObservableCollection<PatientViewModel>(retVal.OrderBy(p => p.Name));
-                } else
+                    return new ObservableCollection<PatientViewModel>(retVal.OrderBy(p => p.Name));
+                }
+                else
                 {
-                    return
-                        new ObservableCollection<PatientViewModel>(retVal.OrderByDescending(p => p.Name));
+                    return new ObservableCollection<PatientViewModel>(retVal.OrderByDescending(p => p.Name));
                 }
             }
         }
 
         public void Delete()
         {
-            if(SelectedPatient == null)
+            if (SelectedPatient == null)
             {
                 return;
             }
             PatientServiceProxy.Current.DeletePatient(SelectedPatient.Id);
-
             Refresh();
         }
 
@@ -92,7 +107,7 @@ namespace App.Clinic.ViewModels
 
         public async void Search()
         {
-            if (Query != null)
+            if (!string.IsNullOrEmpty(Query))
             {
                 await PatientServiceProxy.Current.Search(Query);
             }

@@ -3,16 +3,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="App.Clinic.Views.PatientView"
              Title="PatientView"
-             NavigatedTo="PatientView_NavigatedTo"
-             >
+             NavigatedTo="PatientView_NavigatedTo">
     <VerticalStackLayout>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Text="Name:"/>
-            <Entry Grid.Column="1" Text="{Binding Name}"/>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Text="Name:" VerticalOptions="Center"/>
+            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Name}" HorizontalOptions="FillAndExpand"/>
+
+            <Label Grid.Row="1" Grid.Column="0" Text="Address:" VerticalOptions="Center"/>
+            <Entry Grid.Row="1" Grid.Column="1" Text="{Binding Address}" HorizontalOptions="FillAndExpand"/>
+
+            <Label Grid.Row="2" Grid.Column="0" Text="Birthday:" VerticalOptions="Center"/>
+            <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding Birthday}" HorizontalOptions="End"/>
+
+            <Label Grid.Row="3" Grid.Column="0" Text="Gender:" VerticalOptions="Center"/>
+            <Picker Grid.Row="3" Grid.Column="1" 
+                    ItemsSource="{Binding GenderChoices}" 
+                    SelectedItem="{Binding Gender}" 
+                    HorizontalOptions="End"/>
+
+            <Label Grid.Row="4" Grid.Column="0" Text="SSN:" VerticalOptions="Center"/>
+            <Entry Grid.Row="4" Grid.Column="1" Text="{Binding SSN}" HorizontalOptions="FillAndExpand"/>
+
         </Grid>
         <Button
             Text="Ok"
