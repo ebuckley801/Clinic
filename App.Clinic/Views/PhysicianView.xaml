@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="App.Clinic.Views.PhysicianView"
+             Title="PhysicianView"
+             NavigatedTo="PhysicianView_NavigatedTo">
+    <VerticalStackLayout>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+
+            </Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Grid.Column="0" Text="Name:" VerticalOptions="Center"/>
+            <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Name}" HorizontalOptions="FillAndExpand"/>
+
+            <Label Grid.Row="1" Grid.Column="0" Text="License:" VerticalOptions="Center"/>
+            <Entry Grid.Row="1" Grid.Column="1" Text="{Binding License}" HorizontalOptions="FillAndExpand"/>
+
+            <Label Grid.Row="2" Grid.Column="0" Text="Graduation Date:" VerticalOptions="Center"/>
+            <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding GraduationDate}" HorizontalOptions="End"/>
+
+            <Label Grid.Row="3" Grid.Column="0" Text="Specialty:" VerticalOptions="Center"/>
+            <Entry Grid.Row="3" Grid.Column="1" Text="{Binding Specialty}" HorizontalOptions="FillAndExpand"/>
+        </Grid>
+
+        <Button
+            Text="Ok"
+            Clicked="AddClicked"
+            />
+
+        <Button
+            Text="Cancel"
+            Clicked="CancelClicked"
+            />
+    </VerticalStackLayout>
+</ContentPage>
