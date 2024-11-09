@@ -7,109 +7,177 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace App.Clinic.ViewModels
 {
-    public class AppointmentViewModel
+    public class AppointmentViewModel : INotifyPropertyChanged
     {
-        public Appointment? Model { get; set; }
+        public AppointmentDTO? Model { get; set; }
+        public ICommand? DeleteCommand { get; set; }
+        public ICommand? EditCommand { get; set; }
 
-        public string PatientName
+        public int Id
         {
-            get
+            get => Model?.Id ?? -1;
+            set
             {
-                if(Model != null && Model.PatientId > 0)
+                if (Model != null && Model.Id != value)
                 {
-                    if(Model.Patient == null)
-                    {
-                        Model.Patient = PatientServiceProxy
-                            .Current
-                            .Patients
-                            .FirstOrDefault(p => p.Id == Model.PatientId);
-                    }
+                    Model.Id = value;
+                    NotifyPropertyChanged();
                 }
-
-                return Model?.Patient?.Name ?? string.Empty;
             }
         }
 
-        public PatientDTO? SelectedPatient { 
-            get
-            {
-                return Model?.Patient;
-            }
-
+        public DateTime? StartTime
+        {
+            get => Model?.StartTime;
             set
             {
-                var selectedPatient = value;
-                if(Model != null)
+                if (Model != null && Model.StartTime != value)
                 {
-                    Model.Patient = selectedPatient;
-                    Model.PatientId = selectedPatient?.Id ?? 0;
+                    Model.StartTime = value;
+                    NotifyPropertyChanged();
                 }
-
             }
-         }
+        }
+
+        public DateTime? EndTime
+        {
+            get => Model?.EndTime;
+            set
+            {
+                if (Model != null && Model.EndTime != value)
+                {
+                    Model.EndTime = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ObservableCollection<PatientDTO> Patients { 
             get
             {
                 return new ObservableCollection<PatientDTO>(PatientServiceProxy.Current.Patients);
             }
         }
-
-        public DateTime MinStartDate
-        {
+        public ObservableCollection<PhysicianDTO> Physicians {
             get
             {
-                return DateTime.Today;
+                return new ObservableCollection<PhysicianDTO>(PhysicianServiceProxy.Current.Physicians);
             }
         }
 
-        public void RefreshTime()
+        public PatientDTO? SelectedPatient { 
+            get{
+                return Model?.Patient;
+            } set{
+                if(Model != null)
+                {
+                    Model.Patient = value;
+                    Model.PatientId = value?.Id ?? 0;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        public PhysicianDTO? SelectedPhysician { get{
+            return Model?.Physician;
+        } set{
+            if(Model != null)
+            {
+                Model.Physician = value;
+                Model.PhysicianId = value?.Id ?? 0;
+                NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string PatientName{
+            get{
+                if(Model != null && Model.PatientId > 0)
+                {
+                    if(Model.Patient != null)
+                    {
+                        Model.Patient = PatientServiceProxy.Current.Patients.FirstOrDefault(p => p.Id == Model.PatientId);
+                        NotifyPropertyChanged();
+                    }
+                }
+                return Model?.Patient?.Name ?? "";
+            }
+        }
+
+        public string PhysicianName{
+            get{
+                if(Model != null && Model.PhysicianId > 0)
+                {
+                    if(Model.Physician != null)
+                    {
+                        Model.Physician = PhysicianServiceProxy.Current.Physicians.FirstOrDefault(p => p.Id == Model.PhysicianId);
+                        NotifyPropertyChanged();
+                    }
+                }
+                return Model?.Physician?.Name ?? "";
+            }
+        }
+
+        public AppointmentViewModel()
+        {
+            Model = new AppointmentDTO();
+            SetupCommands();
+        }
+
+        public AppointmentViewModel(AppointmentDTO? _model)
+        {
+            Model = _model;
+            SetupCommands();
+        }
+
+        private void SetupCommands()
+        {
+            DeleteCommand = new Command(DoDelete);
+            EditCommand = new Command((p) => DoEdit(p as AppointmentViewModel));
+        }
+
+        private void DoDelete()
+        {
+            if (Id > 0)
+            {
+                AppointmentServiceProxy.Current.DeleteAppointment(Id);
+                Shell.Current.GoToAsync("//Appointments");
+            }
+        }
+
+        private void DoEdit(AppointmentViewModel? avm)
+        {
+            if (avm == null)
+            {
+                return;
+            }
+            var selectedAppointmentId = avm?.Id ?? 0;
+            Shell.Current.GoToAsync($"//AppointmentDetails?appointmentId={selectedAppointmentId}");
+        }
+
+        public async void ExecuteAdd()
         {
             if (Model != null)
             {
-                if (Model.StartTime != null)
-                {
-                    Model.StartTime = StartDate;
-                    Model.StartTime = Model.StartTime.Value.AddHours(StartTime.Hours);
-                }
-            }
-        }
-        
-        public DateTime StartDate { 
-            
-            get
-            {
-                return Model?.StartTime?.Date ?? DateTime.Today;
+                await AppointmentServiceProxy
+                    .Current
+                    .AddOrUpdateAppointment(Model);
             }
 
-            set
-            {
-                if (Model != null)
-                {
-                    Model.StartTime = value;
-                    RefreshTime();
-                }
-            }
+            await Shell.Current.GoToAsync("//Appointments");
         }
-        public TimeSpan StartTime { get; set; }
 
-        public AppointmentViewModel() {
-            Model = new Appointment();
-        }
-        public AppointmentViewModel(Appointment a)
+        // INotifyPropertyChanged implementation
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
-            Model = a;
-        }
-
-        public void AddOrUpdate()
-        {
-            if(Model != null)
-            {
-                AppointmentServiceProxy.Current.AddOrUpdate(Model);
-            }
-            
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

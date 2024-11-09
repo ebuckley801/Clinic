@@ -1,27 +1,29 @@
-﻿using Library.Clinic.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Library.Clinic.Models;
 
-namespace Library.Clinic.Models
+namespace Library.Clinic.DTO
 {
-    public class Appointment
+    public class AppointmentDTO
     {
-        public Appointment() { }
+        public override string ToString()
+        {
+            return $"[{Id}] {StartTime} - {EndTime}";
+        }
+
+        public string Display
+        {
+            get => $"[{Id}] {StartTime} - {EndTime}";
+        }
 
         public int Id { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
-
         public int PatientId { get; set; }
-
         public int PhysicianId { get; set; }
         public PhysicianDTO? Physician { get; set; }
         public PatientDTO? Patient { get; set; }
 
-        public Appointment(AppointmentDTO a)
+        public AppointmentDTO() { }
+        public AppointmentDTO(Appointment a)
         {
             Id = a.Id;
             StartTime = a.StartTime;
