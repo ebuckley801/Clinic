@@ -13,6 +13,7 @@ namespace App.Clinic.ViewModels
     {
         public PhysicianManagementViewModel()
         {
+            
             SortChoices = new List<SortChoiceEnum>
             {
                 SortChoiceEnum.NameAscending,

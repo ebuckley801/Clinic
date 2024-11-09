@@ -32,4 +32,8 @@
         Title="Manage Physicians"
         ContentTemplate="{DataTemplate views:PhysicianManagement}"
         Route="Physicians" />
+    <ShellContent
+        Title="Physician Details"
+        ContentTemplate="{DataTemplate views:PhysicianView}"
+        Route="PhysicianDetails" />
 </Shell>

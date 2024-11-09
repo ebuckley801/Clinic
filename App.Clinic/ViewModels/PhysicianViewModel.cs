@@ -68,7 +68,7 @@ namespace App.Clinic.ViewModels
             get => Model?.GraduationDate;
             set
             {
-                if(Model != null && Model.GraduationDate != value)
+                if(Model != null)
                 {
                     Model.GraduationDate = value;
                 }

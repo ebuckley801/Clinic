@@ -28,7 +28,7 @@
             <Entry Grid.Row="1" Grid.Column="1" Text="{Binding Address}" HorizontalOptions="FillAndExpand"/>
 
             <Label Grid.Row="2" Grid.Column="0" Text="Birthday:" VerticalOptions="Center"/>
-            <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding Birthday}" HorizontalOptions="End"/>
+            <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding Birthday}" HorizontalOptions="FillAndExpand"/>
 
             <Label Grid.Row="3" Grid.Column="0" Text="Gender:" VerticalOptions="Center"/>
             <Picker Grid.Row="3" Grid.Column="1" 

@@ -15,6 +15,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
 
             </Grid.RowDefinitions>
 
@@ -25,7 +29,7 @@
             <Entry Grid.Row="1" Grid.Column="1" Text="{Binding License}" HorizontalOptions="FillAndExpand"/>
 
             <Label Grid.Row="2" Grid.Column="0" Text="Graduation Date:" VerticalOptions="Center"/>
-            <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding GraduationDate}" HorizontalOptions="End"/>
+            <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding GraduationDate}" HorizontalOptions="FillAndExpand"/>
 
             <Label Grid.Row="3" Grid.Column="0" Text="Specialty:" VerticalOptions="Center"/>
             <Entry Grid.Row="3" Grid.Column="1" Text="{Binding Specialty}" HorizontalOptions="FillAndExpand"/>
