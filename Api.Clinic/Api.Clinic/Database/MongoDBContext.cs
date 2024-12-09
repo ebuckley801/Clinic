@@ -1,11 +1,13 @@
 using Library.Clinic.Models;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using dotenv.net;
+
 namespace Api.Clinic.Database
 {
     public class MongoDBContext
     {
-        private string connectionString = "mongodb+srv://ebuckley801:35rfy98r@clinic.jun7m.mongodb.net/?retryWrites=true&w=majority&appName=Clinic";
+        private string connectionString = DotEnv.Read()["MONGO_CONNECTION_STRING"];
 
         public MongoDBContext() { }
 
@@ -77,6 +79,65 @@ namespace Api.Clinic.Database
                 await collection.DeleteOneAsync(filter);
             }
         }
+
+        //Physicians
+        public async Task<IEnumerable<Physician>> GetPhysicians()
+        {
+            var returnVal = new List<Physician>();
+            using (var conn = new MongoClient(connectionString))
+            {
+                var database = conn.GetDatabase("Clinic");
+                var collection = database.GetCollection<Physician>("Physicians");
+                var Physicians = await collection.Find(FilterDefinition<Physician>.Empty).ToListAsync();
+                return Physicians;
+            }
+        }
+
+        public async Task<Physician> GetPhysician(ObjectId id)
+        {
+            using (var conn = new MongoClient(connectionString))
+            {
+                var database = conn.GetDatabase("Clinic");
+                var collection = database.GetCollection<Physician>("Physicians");
+                return await collection.Find(new BsonDocument("_id", id)).FirstOrDefaultAsync();
+            }
+        }
+        
+
+
+        public async Task<Physician> AddPhysician(Physician Physician){
+            using (var conn = new MongoClient(connectionString))
+            {
+                var database = conn.GetDatabase("Clinic");
+                var collection = database.GetCollection<Physician>("Physicians");
+                await collection.InsertOneAsync(Physician);
+            }
+            return Physician;
+        }
+
+        public async Task<Physician> UpdatePhysician(Physician Physician){
+            using (var conn = new MongoClient(connectionString))
+            {
+                var database = conn.GetDatabase("Clinic");
+                var collection = database.GetCollection<Physician>("Physicians");
+                var filter = Builders<Physician>.Filter.Eq(p => p.Id, Physician.Id);
+                await collection.ReplaceOneAsync(filter, Physician);
+            }
+            return Physician;
+        }
+
+        public async Task DeletePhysician(ObjectId id)
+        {
+            using (var conn = new MongoClient(connectionString))
+            {
+                var database = conn.GetDatabase("Clinic");
+                var collection = database.GetCollection<Physician>("Physicians");
+                var filter = Builders<Physician>.Filter.Eq(p => p.Id, id);
+                await collection.DeleteOneAsync(filter);
+            }
+        }
+
+         
 
         public async Task<List<Appointment>> GetAppointments()
         {
