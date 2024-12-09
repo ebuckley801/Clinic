@@ -1,6 +1,8 @@
 using Library.Clinic.Models;
 using System.Collections.Generic;
 using System.Linq;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Api.Clinic.Database
 {
@@ -25,7 +27,7 @@ namespace Api.Clinic.Database
                 Id = 1,
                 StartTime = new DateTime(2024, 10, 10, 9, 0, 0),
                 EndTime = new DateTime(2024, 10, 10, 10, 0, 0),
-                PatientId = 1,
+                PatientId = ObjectId.Parse("5a934e000102030405060708"),
                 PhysicianId = 1
             },
             new Appointment
@@ -33,7 +35,7 @@ namespace Api.Clinic.Database
                 Id = 2,
                 StartTime = new DateTime(2024, 10, 11, 11, 0, 0),
                 EndTime = new DateTime(2024, 10, 11, 12, 0, 0),
-                PatientId = 2,
+                PatientId = ObjectId.Parse("5a934e000102030405060708"),
                 PhysicianId = 2
             }
         };

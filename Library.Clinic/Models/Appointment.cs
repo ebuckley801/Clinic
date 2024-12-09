@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Library.Clinic.Models
 {
@@ -15,7 +17,9 @@ namespace Library.Clinic.Models
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
 
-        public int PatientId { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId PatientId { get; set; }
 
         public int PhysicianId { get; set; }
         public PhysicianDTO? Physician { get; set; }

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Library.Clinic.Models
 {
@@ -22,7 +24,9 @@ namespace Library.Clinic.Models
                 return $"[{Id}] {Name}";
             }
         }
-        public int Id { get; set; }
+
+        [BsonId]
+        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public string? Name { get; set; }
         public DateTime? Birthday { get; set; }
         public string? Address { get; set; }
@@ -30,9 +34,6 @@ namespace Library.Clinic.Models
         public string? SSN { get; set; }
         public DiagnosisEnum[]? Diagnoses { get; set; }
         public PrescriptionEnum[]? Prescriptions { get; set; }
-
-
-
         public Patient()
         {
             Name = string.Empty;
@@ -44,16 +45,16 @@ namespace Library.Clinic.Models
             Prescriptions = Array.Empty<PrescriptionEnum>();
         }
 
-        public Patient(PatientDTO p)
+        public Patient(PatientDTO patientDTO)
         {
-            Id = p.Id;
-            Name = p.Name;
-            Birthday = p.Birthday;
-            Address = p.Address;
-            Gender = p.Gender;
-            SSN = p.SSN;
-            Diagnoses = p.Diagnoses;
-            Prescriptions = p.Prescriptions;
+            Id = ObjectId.Parse(patientDTO.Id);
+            Name = patientDTO.Name;
+            Birthday = patientDTO.Birthday;
+            Address = patientDTO.Address;
+            Gender = patientDTO.Gender;
+            SSN = patientDTO.SSN;
+            Diagnoses = patientDTO.Diagnoses;
+            Prescriptions = patientDTO.Prescriptions;
         }
     }
 }

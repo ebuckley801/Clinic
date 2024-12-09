@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Library.Clinic.DTO
 {
@@ -22,7 +24,9 @@ namespace Library.Clinic.DTO
                 return $"[{Id}] {Name}";
             }
         }
-        public int Id { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public string? Name { get; set;}
         public DateTime? Birthday { get; set; }
         public string? Address { get; set; }
@@ -31,17 +35,18 @@ namespace Library.Clinic.DTO
         public DiagnosisEnum[]? Diagnoses { get; set; }
         public PrescriptionEnum[]? Prescriptions { get; set; }
 
-        public PatientDTO() { }
-        public PatientDTO(Patient p)
+        public PatientDTO() {}
+
+        public PatientDTO(Patient patient)
         {
-            Id = p.Id;
-            Name = p.Name;
-            Birthday = p.Birthday;
-            Address = p.Address;
-            Gender = p.Gender;
-            SSN = p.SSN;
-            Diagnoses = p.Diagnoses;
-            Prescriptions = p.Prescriptions;
+            Id = patient.Id.ToString();
+            Name = patient.Name;
+            Birthday = patient.Birthday;
+            Address = patient.Address;
+            Gender = patient.Gender;
+            SSN = patient.SSN;
+            Diagnoses = patient.Diagnoses;
+            Prescriptions = patient.Prescriptions;
         }
     }
 }

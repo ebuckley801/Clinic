@@ -8,6 +8,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Library.Clinic.Services
 {
@@ -35,19 +37,7 @@ namespace Library.Clinic.Services
             instance = null;
             patients = new List<PatientDTO>();
             var patientsData = new WebRequestHandler().Get("/Patient").Result;
-
             Patients = JsonConvert.DeserializeObject<List<PatientDTO>>(patientsData) ?? new List<PatientDTO>();
-        }
-        public int LastKey
-        {
-            get
-            {
-                if (Patients.Any())
-                {
-                    return Patients.Select(x => x.Id).Max();
-                }
-                return 0;
-            }
         }
 
         private List<PatientDTO> patients;
@@ -80,11 +70,11 @@ namespace Library.Clinic.Services
         {
             var payload = await new WebRequestHandler().Post("/patient", patient);
             var newPatient = JsonConvert.DeserializeObject<PatientDTO>(payload);
-            if(newPatient != null && newPatient.Id > 0 && patient.Id == 0)
+            if(newPatient != null)
             {
                 //new patient to be added to the list
                 Patients.Add(newPatient);
-            } else if(newPatient != null && patient != null && patient.Id > 0 && patient.Id == newPatient.Id)
+            } else if(newPatient != null && patient != null&& patient.Id == newPatient.Id)
             {
                 //edit, exchange the object in the list
                 var currentPatient = Patients.FirstOrDefault(p => p.Id == newPatient.Id);
@@ -100,8 +90,8 @@ namespace Library.Clinic.Services
             return newPatient;
         }
 
-        public async void DeletePatient(int id) {
-            var patientToRemove = Patients.FirstOrDefault(p => p.Id == id);
+        public async void DeletePatient(ObjectId id) {
+            var patientToRemove = Patients.FirstOrDefault(p => p.Id == id.ToString());
 
             if (patientToRemove != null)
             {

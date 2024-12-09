@@ -1,4 +1,6 @@
 using Library.Clinic.Models;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Library.Clinic.DTO
 {
@@ -14,10 +16,14 @@ namespace Library.Clinic.DTO
             get => $"[{Id}] {StartTime} - {EndTime}";
         }
 
+
         public int Id { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
-        public int PatientId { get; set; }
+
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId PatientId { get; set; }
         public int PhysicianId { get; set; }
         public PhysicianDTO? Physician { get; set; }
         public PatientDTO? Patient { get; set; }

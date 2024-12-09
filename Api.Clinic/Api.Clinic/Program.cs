@@ -1,11 +1,25 @@
+using AutoMapper;
+using Api.Clinic.Mapping;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Driver;
+using Api.Clinic.Enterprise;
+using Api.Clinic.Database;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Configure MongoDB
+builder.Services.AddSingleton<MongoDBContext>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
+// Register Enterprise Components
+builder.Services.AddScoped<PatientEC>();
+
 
 var app = builder.Build();
 

@@ -30,7 +30,7 @@ namespace PP.Library.Utilities
                 }
             } catch(Exception e)
             {
-
+                Console.WriteLine(e.Message);
             }
 
 
@@ -61,7 +61,7 @@ namespace PP.Library.Utilities
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
             }
 
 
