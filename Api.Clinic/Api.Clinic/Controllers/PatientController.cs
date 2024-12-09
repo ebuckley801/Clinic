@@ -84,27 +84,19 @@ namespace Api.Clinic.Controllers
         /// <summary>
         /// Adds a new patient or updates an existing one.
         /// </summary>
-        [HttpPost]
-        public async Task<ActionResult<PatientDTO>> AddOrUpdate([FromBody] PatientDTO? patientDto)
+        [HttpPost("Add")]
+        public async Task<ActionResult<PatientDTO>> Add([FromBody] PatientDTO? patientDto)
         {
-            if (patientDto == null)
-            {
-                return BadRequest("Patient data is required.");
-            }
-
-            // Convert DTO to internal model
             var patient = new Patient(patientDto);
+            var result = await _patientEC.AddPatient(patient);
+            return Ok(result);
+        }
 
-            // Ensure the ID is a valid ObjectId
-            if (!ObjectId.TryParse(patientDto.Id, out ObjectId objectId))
-            {
-                patient.Id = ObjectId.GenerateNewId();
-            }
-            else
-            {
-                patient.Id = objectId;
-            }
-            var result = await _patientEC.AddOrUpdate(patientDto);
+        [HttpPost("Update")]
+        public async Task<ActionResult<PatientDTO>> Update([FromBody] PatientDTO? patientDto)
+        {
+            var patient = new Patient(patientDto);
+            var result = await _patientEC.UpdatePatient(patient);
             return Ok(result);
         }
     }

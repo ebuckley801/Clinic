@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-
+using MongoDB.Bson;
 namespace App.Clinic.ViewModels
 {
     public class AppointmentViewModel : INotifyPropertyChanged
@@ -78,7 +78,7 @@ namespace App.Clinic.ViewModels
                 if(Model != null)
                 {
                     Model.Patient = value;
-                    Model.PatientId = value?.Id ?? 0;
+                    Model.PatientId = value?.Id ?? String.Empty;
                     NotifyPropertyChanged();
                 }
             }
@@ -97,7 +97,7 @@ namespace App.Clinic.ViewModels
 
         public string PatientName{
             get{
-                if(Model != null && Model.PatientId > 0)
+                if(Model != null && !String.IsNullOrEmpty(Model.PatientId))
                 {
                     if(Model.Patient != null)
                     {

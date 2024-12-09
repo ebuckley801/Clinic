@@ -13,7 +13,7 @@ namespace Library.Clinic.DTO
     {
         public override string ToString()
         {
-            return $"[{Id}] {Name}";
+            return $"{Name}";
         }
 
         //TODO: Remove this and put it on a ViewModel instead
@@ -21,7 +21,7 @@ namespace Library.Clinic.DTO
         {
             get
             {
-                return $"[{Id}] {Name}";
+                return $"{Name}";
             }
         }
 
@@ -35,7 +35,16 @@ namespace Library.Clinic.DTO
         public DiagnosisEnum[]? Diagnoses { get; set; }
         public PrescriptionEnum[]? Prescriptions { get; set; }
 
-        public PatientDTO() {}
+        public PatientDTO() {
+            Id = "0";
+            Name = "";
+            Birthday = DateTime.Now;
+            Address = "";
+            Gender = "";
+            SSN = "";
+            Diagnoses = new DiagnosisEnum[] {};
+            Prescriptions = new PrescriptionEnum[] {};
+        }
 
         public PatientDTO(Patient patient)
         {

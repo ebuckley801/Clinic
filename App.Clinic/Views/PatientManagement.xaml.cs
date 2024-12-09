@@ -3,6 +3,8 @@ using Library.Clinic.Models;
 using Library.Clinic.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using MongoDB.Bson;
+using Library.Clinic.DTO;
 
 namespace App.Clinic.Views;
 
@@ -22,13 +24,13 @@ public partial class PatientManagement : ContentPage, INotifyPropertyChanged
 
     private void AddClicked(object sender, EventArgs e)
     {
-        Shell.Current.GoToAsync("//PatientDetails?patientId=0");
+        Shell.Current.GoToAsync($"//PatientDetails?patientId=0");
     }
 
     private void EditClicked(object sender, EventArgs e)
     {
         var selectedPatientId = (BindingContext as PatientManagementViewModel)?
-            .SelectedPatient?.Id ?? 0;
+            .SelectedPatient?.Id ?? string.Empty;
         Shell.Current.GoToAsync($"//PatientDetails?patientId={selectedPatientId}");
     }
 

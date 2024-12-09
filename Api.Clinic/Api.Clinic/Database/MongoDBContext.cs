@@ -31,20 +31,38 @@ namespace Api.Clinic.Database
             }
         }
         
-        public async Task<Patient> AddOrUpdatePatient(Patient patient)
-        {
+
+
+        public async Task<Patient> AddPatient(Patient patient){
             using (var conn = new MongoClient(connectionString))
             {
                 var database = conn.GetDatabase("Clinic");
                 var collection = database.GetCollection<Patient>("Patients");
-                if(patient.Id == null)
-                {
-                    await collection.InsertOneAsync(patient);
-                }
-                else
-                {
-                    await collection.ReplaceOneAsync(FilterDefinition<Patient>.Empty, patient);
-                }
+                /* 
+                    declare @id int
+                    exec Patients.[Add] 
+                    @name = 'John Doe'
+                    , @birthday = '1990-01-01'
+                    , @address = '123 Main St, Anytown, USA'
+                    , @gender = 'Male'
+                    , @ssn = '123-45-6789'
+                    , @diagnoses = 'Diagnosis1, Diagnosis2'
+                    , @prescriptions = 'Prescription1, Prescription2'
+                    , @patientId = @id output
+                    select @id
+                */
+                await collection.InsertOneAsync(patient);
+            }
+            return patient;
+        }
+
+        public async Task<Patient> UpdatePatient(Patient patient){
+            using (var conn = new MongoClient(connectionString))
+            {
+                var database = conn.GetDatabase("Clinic");
+                var collection = database.GetCollection<Patient>("Patients");
+                var filter = Builders<Patient>.Filter.Eq(p => p.Id, patient.Id);
+                await collection.ReplaceOneAsync(filter, patient);
             }
             return patient;
         }
@@ -55,7 +73,8 @@ namespace Api.Clinic.Database
             {
                 var database = conn.GetDatabase("Clinic");
                 var collection = database.GetCollection<Patient>("Patients");
-                await collection.DeleteOneAsync(FilterDefinition<Patient>.Empty);
+                var filter = Builders<Patient>.Filter.Eq(p => p.Id, id);
+                await collection.DeleteOneAsync(filter);
             }
         }
 

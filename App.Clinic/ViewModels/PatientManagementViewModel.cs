@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-
+using MongoDB.Bson;
 namespace App.Clinic.ViewModels
 {
     public class PatientManagementViewModel : INotifyPropertyChanged
@@ -90,13 +90,13 @@ namespace App.Clinic.ViewModels
             }
         }
 
-        public void Delete()
+        public async void Delete()
         {
             if (SelectedPatient == null)
             {
                 return;
             }
-            PatientServiceProxy.Current.DeletePatient(SelectedPatient.Id);
+            PatientServiceProxy.Current.DeletePatient(ObjectId.Parse(SelectedPatient.Id));
             Refresh();
         }
 

@@ -13,7 +13,7 @@ namespace Library.Clinic.Models
     {
         public override string ToString()
         {
-            return $"[{Id}] {Name}";
+            return $"{Name}";
         }
 
         //TODO: Remove this and put it on a ViewModel instead
@@ -21,7 +21,7 @@ namespace Library.Clinic.Models
         {
             get
             {
-                return $"[{Id}] {Name}";
+                return $"{Name}";
             }
         }
 
@@ -47,7 +47,14 @@ namespace Library.Clinic.Models
 
         public Patient(PatientDTO patientDTO)
         {
-            Id = ObjectId.Parse(patientDTO.Id);
+            if(patientDTO.Id != "0")
+            {
+                Id = ObjectId.Parse(patientDTO.Id);
+            }
+            else
+            {
+                Id = ObjectId.GenerateNewId();
+            }
             Name = patientDTO.Name;
             Birthday = patientDTO.Birthday;
             Address = patientDTO.Address;

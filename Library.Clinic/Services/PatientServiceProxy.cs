@@ -56,7 +56,6 @@ namespace Library.Clinic.Services
         }
 
         public async Task<List<PatientDTO>> Search(string query) {
-
             var patientsPayload = await new WebRequestHandler()
                 .Post("/Patient/Search", new Query(query));
 
@@ -68,26 +67,34 @@ namespace Library.Clinic.Services
 
         public async Task<PatientDTO?> AddOrUpdatePatient(PatientDTO patient)
         {
-            var payload = await new WebRequestHandler().Post("/patient", patient);
-            var newPatient = JsonConvert.DeserializeObject<PatientDTO>(payload);
-            if(newPatient != null)
+            if (patient != null)
             {
-                //new patient to be added to the list
-                Patients.Add(newPatient);
-            } else if(newPatient != null && patient != null&& patient.Id == newPatient.Id)
-            {
-                //edit, exchange the object in the list
-                var currentPatient = Patients.FirstOrDefault(p => p.Id == newPatient.Id);
-                var index = Patients.Count;
-                if (currentPatient != null)
+                // For new patients
+                if (string.IsNullOrEmpty(patient.Id) || patient.Id == "0")
                 {
-                    index = Patients.IndexOf(currentPatient);
-                    Patients.RemoveAt(index);
+                    Patients.Add(patient);
+                    await new WebRequestHandler().Post("/Patient/Add", patient);
                 }
-                Patients.Insert(index, newPatient);
+                // For existing patients
+                else
+                {
+                    var existingPatient = Patients.FirstOrDefault(p => p.Id == patient.Id);
+                    if (existingPatient != null)
+                    {
+                        Patients[Patients.IndexOf(existingPatient)] = patient;
+                        await new WebRequestHandler().Post("/Patient/Update", patient);
+                    }
+                    else
+                    {
+                        Patients.Add(patient);
+                        await new WebRequestHandler().Post("/Patient/Add", patient);
+                    }
+                }
+                
+                return patient;
             }
-
-            return newPatient;
+            
+            return null;
         }
 
         public async void DeletePatient(ObjectId id) {
@@ -96,7 +103,6 @@ namespace Library.Clinic.Services
             if (patientToRemove != null)
             {
                 Patients.Remove(patientToRemove);
-
                 await new WebRequestHandler().Delete($"/Patient/{id}");
             }
         }

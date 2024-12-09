@@ -15,37 +15,40 @@ public partial class PatientView : ContentPage
 		InitializeComponent();
         BindingContext = new PatientViewModel();
 	}
-    public int PatientId { get; set; }
+    public string PatientId { get; set; }
 
     private void CancelClicked(object sender, EventArgs e)
     {
-		Shell.Current.GoToAsync("//Patients");
+        Shell.Current.GoToAsync("//Patients");
     }
 
-    private void AddClicked(object sender, EventArgs e)
+    private async void AddClicked(object sender, EventArgs e)
     {
         (BindingContext as PatientViewModel)?.ExecuteAdd();
+        await Shell.Current.GoToAsync("//Patients");
     }
 
     private void PatientView_NavigatedTo(object sender, NavigatedToEventArgs e)
     {
-        //TODO: this really needs to be in a view model
-        if(PatientId > 0)
-        {
-            var model = PatientServiceProxy.Current
-                .Patients.FirstOrDefault(p => p.Id == PatientId);
-            if(model != null)
-            {
-                BindingContext = new PatientViewModel(model);
-            } else
-            {
-                BindingContext = new PatientViewModel();
-            }
-            
-        } else
+        if (string.IsNullOrEmpty(PatientId))
         {
             BindingContext = new PatientViewModel();
+            return;
         }
-        
+
+        if (PatientId == "0")
+        {
+            // New patient
+            BindingContext = new PatientViewModel();
+        }
+        else
+        {
+            // Existing patient
+            var model = PatientServiceProxy.Current
+                .Patients.FirstOrDefault(p => p.Id == PatientId);
+            BindingContext = model != null 
+                ? new PatientViewModel(model) 
+                : new PatientViewModel();
+        }
     }
 }

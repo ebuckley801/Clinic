@@ -21,9 +21,7 @@ namespace Library.Clinic.DTO
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
 
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public ObjectId PatientId { get; set; }
+        public string PatientId { get; set; }
         public int PhysicianId { get; set; }
         public PhysicianDTO? Physician { get; set; }
         public PatientDTO? Patient { get; set; }
@@ -34,7 +32,7 @@ namespace Library.Clinic.DTO
             Id = a.Id;
             StartTime = a.StartTime;
             EndTime = a.EndTime;
-            PatientId = a.PatientId;
+            PatientId = a.PatientId.ToString();
             PhysicianId = a.PhysicianId;
             Physician = a.Physician;
             Patient = a.Patient;

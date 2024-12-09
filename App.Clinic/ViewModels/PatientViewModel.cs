@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using MongoDB.Bson;
+using Newtonsoft.Json;
 
 namespace App.Clinic.ViewModels
 {
@@ -18,13 +20,14 @@ namespace App.Clinic.ViewModels
         public PatientDTO? Model { get; set; }
         public ICommand? DeleteCommand { get; set; }
         public ICommand? EditCommand { get; set; }
-        public int Id
+
+        public string Id
         {
             get
             {
                 if(Model == null)
                 {
-                    return -1;
+                    return string.Empty;
                 }
 
                 return Model.Id;
@@ -106,9 +109,9 @@ namespace App.Clinic.ViewModels
 
         private void DoDelete()
         {
-            if (Id > 0)
+            if (!string.IsNullOrEmpty(Id))
             {
-                PatientServiceProxy.Current.DeletePatient(Id);
+                PatientServiceProxy.Current.DeletePatient(ObjectId.Parse(Id));
                 Shell.Current.GoToAsync("//Patients");
             }
         }
@@ -119,32 +122,37 @@ namespace App.Clinic.ViewModels
             {
                 return;
             }
-            var selectedPatientId = pvm?.Id ?? 0;
+            var selectedPatientId = pvm?.Id ?? string.Empty;
             Shell.Current.GoToAsync($"//PatientDetails?patientId={selectedPatientId}");
         }
 
         public PatientViewModel()
         {
-
             Model = new PatientDTO();
             SetupCommands();
         }
 
         public PatientViewModel(PatientDTO? _model)
         {
-            Model = _model;
+            if(_model == null)
+            {
+                Model = new PatientDTO();
+            }
+            else
+            {
+                var serialized = JsonConvert.SerializeObject(_model);
+                Model = JsonConvert.DeserializeObject<PatientDTO>(serialized);
+            }
             SetupCommands();
         }
 
         public async void ExecuteAdd()
         {
-            if (Model != null)
-            {
-                await PatientServiceProxy
-                .Current
-                .AddOrUpdatePatient(Model);
-            }
+            await PatientServiceProxy.Current.AddOrUpdatePatient(Model);
+        }
 
+        public async void Cancel()
+        {
             await Shell.Current.GoToAsync("//Patients");
         }
 
@@ -154,6 +162,18 @@ namespace App.Clinic.ViewModels
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public async void NavigatedTo()
+        {
+            
+            await PatientServiceProxy.Current.AddOrUpdatePatient(Model);
+            NotifyPropertyChanged(nameof(Patient));
+        }
+
+        public async void Refresh()
+        {
+            NotifyPropertyChanged(nameof(Patient));
         }
     }
 

@@ -48,13 +48,14 @@ namespace Api.Clinic.Enterprise
             return null;
         }
 
-        public async Task<Patient?> AddOrUpdate(PatientDTO? patient)
+        public async Task<Patient?> AddPatient(Patient patient)
         {
-            if(patient == null)
-            {
-                return null;
-            }
-            return await _mongoDBContext.AddOrUpdatePatient(new Patient(patient));
+            return await _mongoDBContext.AddPatient(patient);
+        }
+
+        public async Task<Patient?> UpdatePatient(Patient patient)
+        {
+            return await _mongoDBContext.UpdatePatient(patient);
         }
     }
 }

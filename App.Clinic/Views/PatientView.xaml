@@ -21,7 +21,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Text="Name:" VerticalOptions="Center"/>
+            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Id}" VerticalOptions="Center"/>
             <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Name}" HorizontalOptions="FillAndExpand"/>
 
             <Label Grid.Row="1" Grid.Column="0" Text="Address:" VerticalOptions="Center"/>
@@ -31,10 +31,7 @@
             <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding Birthday}" HorizontalOptions="FillAndExpand"/>
 
             <Label Grid.Row="3" Grid.Column="0" Text="Gender:" VerticalOptions="Center"/>
-            <Picker Grid.Row="3" Grid.Column="1" 
-                    ItemsSource="{Binding GenderChoices}" 
-                    SelectedItem="{Binding Gender}" 
-                    HorizontalOptions="End"/>
+            <Entry Grid.Row="3" Grid.Column="1" Text="{Binding Gender}" HorizontalOptions="FillAndExpand"/>
 
             <Label Grid.Row="4" Grid.Column="0" Text="SSN:" VerticalOptions="Center"/>
             <Entry Grid.Row="4" Grid.Column="1" Text="{Binding SSN}" HorizontalOptions="FillAndExpand"/>

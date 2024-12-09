@@ -37,7 +37,7 @@ namespace Api.ToDoApplication.Persistence
             //set up a new Id if one doesn't already exist
             if(patient.Id == null)
             {
-                patient.Id = (await mongoDBContext.AddOrUpdatePatient(patient)).Id;
+                patient.Id = (await mongoDBContext.AddPatient(patient)).Id;
             }   
             //go to the right place
             string path = $"{_patientRoot}\\{patient.Id}.json";

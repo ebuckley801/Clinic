@@ -30,7 +30,7 @@ namespace Library.Clinic.Models
             Id = a.Id;
             StartTime = a.StartTime;
             EndTime = a.EndTime;
-            PatientId = a.PatientId;
+            PatientId = ObjectId.Parse(a.PatientId);
             PhysicianId = a.PhysicianId;
             Physician = a.Physician;
             Patient = a.Patient;
