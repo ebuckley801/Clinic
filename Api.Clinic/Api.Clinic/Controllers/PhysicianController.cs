@@ -2,6 +2,7 @@ using Api.Clinic.Enterprise;
 using Library.Clinic.DTO;
 using Library.Clinic.Models;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 
 namespace Api.Clinic.Controllers
 {
@@ -10,40 +11,68 @@ namespace Api.Clinic.Controllers
     public class PhysicianController : ControllerBase
     {
         private readonly ILogger<PhysicianController> _logger;
+        private readonly PhysicianEC _physicianEC;
 
         public PhysicianController(ILogger<PhysicianController> logger)
         {
             _logger = logger;
+            _physicianEC = new PhysicianEC();
         }
 
         [HttpGet]
-        public IEnumerable<PhysicianDTO> Get()
+        public async Task<IEnumerable<PhysicianDTO>> Get()
         {
-            return new PhysicianEC().Physicians;
+            return await _physicianEC.GetPhysicians();
         }
 
         [HttpGet("{id}")]
-        public PhysicianDTO? GetById(int id)
+        public async Task<ActionResult<PhysicianDTO?>> GetById(string id)
         {
-            return new PhysicianEC().GetById(id);
+            if (!ObjectId.TryParse(id, out var objectId))
+            {
+                return BadRequest("Invalid ID format.");
+            }
+            
+            var physician = await _physicianEC.GetById(objectId);
+            if (physician == null)
+            {
+                return NotFound();
+            }
+            return Ok(physician);
         }
 
         [HttpDelete("{id}")]
-        public PhysicianDTO? Delete(int id)
+        public async Task<ActionResult<PhysicianDTO?>> Delete(string id)
         {
-            return new PhysicianEC().Delete(id);
+            if (!ObjectId.TryParse(id, out var objectId))
+            {
+                return BadRequest("Invalid ID format.");
+            }
+
+            var deletedPhysician = await _physicianEC.Delete(objectId);
+            if (deletedPhysician == null)
+            {
+                return NotFound();
+            }
+            return Ok(deletedPhysician);
         }
 
         [HttpPost("Search")]
-        public List<PhysicianDTO> Search([FromBody] Query q)
+        public async Task<List<PhysicianDTO>> Search([FromBody] Query q)
         {
-            return new PhysicianEC().Search(q?.Content ?? string.Empty)?.ToList() ?? new List<PhysicianDTO>();
+            return (await _physicianEC.Search(q?.Content ?? string.Empty)).ToList();
         }
 
-        [HttpPost]
-        public Physician? AddOrUpdate([FromBody] PhysicianDTO? physician)
+        [HttpPost("Add")]
+        public async Task<ActionResult<PhysicianDTO?>> Add([FromBody] PhysicianDTO? physician)
         {
-            return new PhysicianEC().AddOrUpdate(physician);
+            return Ok(await _physicianEC.AddPhysician(new Physician(physician)));
+        }
+
+        [HttpPost("Update")]
+        public async Task<ActionResult<PhysicianDTO?>> Update([FromBody] PhysicianDTO? physician)
+        {
+            return Ok(await _physicianEC.UpdatePhysician(new Physician(physician)));
         }
     }
 }

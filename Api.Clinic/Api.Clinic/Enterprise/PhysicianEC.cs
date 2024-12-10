@@ -1,34 +1,32 @@
 using Api.Clinic.Database;
 using Library.Clinic.DTO;
 using Library.Clinic.Models;
+using MongoDB.Driver;
+using MongoDB.Bson;
 
 namespace Api.Clinic.Enterprise
 {
     public class PhysicianEC
     {
-        public PhysicianEC() { }
+        private MongoDBContext _mongoDBContext = new MongoDBContext();
 
-        public IEnumerable<PhysicianDTO> Physicians
+        public async Task<IEnumerable<PhysicianDTO>> GetPhysicians()
         {
-            get
-            {
-                return FakePhysicianDatabase.Physicians.Take(100).Select(p => new PhysicianDTO(p));
-            }
+            var physicians = await _mongoDBContext.GetPhysicians();
+            return physicians.Take(100).Select(p => new PhysicianDTO(p));
         }
 
-        public IEnumerable<PhysicianDTO>? Search(string query)
+        public async Task<IEnumerable<PhysicianDTO>> Search(string query)
         {
-            return FakePhysicianDatabase.Physicians
+            return (await _mongoDBContext.GetPhysicians())
                 .Where(p => p.Name?.ToUpper()
                     .Contains(query?.ToUpper() ?? string.Empty) ?? false)
                 .Select(p => new PhysicianDTO(p));
         }
 
-        public PhysicianDTO? GetById(int id)
+        public async Task<PhysicianDTO?> GetById(ObjectId id)
         {
-            var physician = FakePhysicianDatabase
-                .Physicians
-                .FirstOrDefault(p => p.Id == id);
+            var physician = await _mongoDBContext.GetPhysician(id);
             if (physician != null)
             {
                 return new PhysicianDTO(physician);
@@ -37,25 +35,26 @@ namespace Api.Clinic.Enterprise
             return null;
         }
 
-        public PhysicianDTO? Delete(int id)
+        public async Task<PhysicianDTO?> Delete(ObjectId id)
         {
-            var physicianToDelete = FakePhysicianDatabase.Physicians.FirstOrDefault(p => p.Id == id);
+            var physicianToDelete = await _mongoDBContext.GetPhysician(id);
             if (physicianToDelete != null)
             {
-                FakePhysicianDatabase.Physicians.Remove(physicianToDelete);
+                await _mongoDBContext.DeletePhysician(id);
                 return new PhysicianDTO(physicianToDelete);
             }
 
             return null;
         }
 
-        public Physician? AddOrUpdate(PhysicianDTO? physician)
+        public async Task<Physician?> AddPhysician(Physician physician)
         {
-            if (physician == null)
-            {
-                return null;
-            }
-            return FakePhysicianDatabase.AddOrUpdatePhysician(new Physician(physician));
+            return await _mongoDBContext.AddPhysician(physician);
+        }
+
+        public async Task<Physician?> UpdatePhysician(Physician physician)
+        {
+            return await _mongoDBContext.UpdatePhysician(physician);
         }
     }
 }

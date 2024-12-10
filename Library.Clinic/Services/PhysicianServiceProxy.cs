@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using MongoDB.Bson;
 namespace Library.Clinic.Services
 {
     public class PhysicianServiceProxy
@@ -33,20 +33,7 @@ namespace Library.Clinic.Services
             instance = null;
             physicians = new List<PhysicianDTO>();
             var physiciansData = new WebRequestHandler().Get("/Physician").Result;
-
             Physicians = JsonConvert.DeserializeObject<List<PhysicianDTO>>(physiciansData) ?? new List<PhysicianDTO>();
-        }
-
-        public int LastKey
-        {
-            get
-            {
-                if (Physicians.Any())
-                {
-                    return Physicians.Select(x => x.Id).Max();
-                }
-                return 0;
-            }
         }
 
         private List<PhysicianDTO> physicians;
@@ -56,7 +43,6 @@ namespace Library.Clinic.Services
             {
                 return physicians;
             }
-
             private set
             {
                 if (physicians != value)
@@ -79,39 +65,50 @@ namespace Library.Clinic.Services
 
         public async Task<PhysicianDTO?> AddOrUpdatePhysician(PhysicianDTO physician)
         {
-            var payload = await new WebRequestHandler().Post("/physician", physician);
-            var newPhysician = JsonConvert.DeserializeObject<PhysicianDTO>(payload);
-            if (newPhysician != null && newPhysician.Id > 0 && physician.Id == 0)
+            if (physician != null)
             {
-                // New physician to be added to the list
-                Physicians.Add(newPhysician);
-            }
-            else if (newPhysician != null && physician != null && physician.Id > 0 && physician.Id == newPhysician.Id)
-            {
-                // Edit: Replace the existing physician in the list
-                var currentPhysician = Physicians.FirstOrDefault(p => p.Id == newPhysician.Id);
-                var index = Physicians.Count;
-                if (currentPhysician != null)
+                if (string.IsNullOrEmpty(physician.Id) || physician.Id == "0")
                 {
-                    index = Physicians.IndexOf(currentPhysician);
-                    Physicians.RemoveAt(index);
+                    Physicians.Add(physician);
+                    await new WebRequestHandler().Post("/Physician/Add", physician);
                 }
-                Physicians.Insert(index, newPhysician);
+                else
+                {
+                    var existingPhysician = Physicians.FirstOrDefault(p => p.Id == physician.Id);
+                    if (existingPhysician != null)
+                    {
+                        Physicians[Physicians.IndexOf(existingPhysician)] = physician;
+                        await new WebRequestHandler().Post("/Physician/Update", physician);
+                    }
+                    else
+                    {
+                        Physicians.Add(physician);
+                        await new WebRequestHandler().Post("/Physician/Add", physician);
+                    }
+                }
+                await RefreshPhysicians();
+                return physician;
             }
-
-            return newPhysician;
+            await RefreshPhysicians();
+            return null;
         }
 
-        public async Task DeletePhysician(int id)
+        public async Task RefreshPhysicians()
         {
-            var physicianToRemove = Physicians.FirstOrDefault(p => p.Id == id);
+            var physiciansData = await new WebRequestHandler().Get("/Physician");
+            Physicians = JsonConvert.DeserializeObject<List<PhysicianDTO>>(physiciansData) ?? new List<PhysicianDTO>();
+        }
+
+        public async void DeletePhysician(ObjectId id)
+        {
+            var physicianToRemove = Physicians.FirstOrDefault(p => p.Id == id.ToString());
 
             if (physicianToRemove != null)
             {
                 Physicians.Remove(physicianToRemove);
-
                 await new WebRequestHandler().Delete($"/Physician/{id}");
             }
+            await RefreshPhysicians();
         }
     }
 }

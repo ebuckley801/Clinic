@@ -21,7 +21,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Id}" VerticalOptions="Center"/>
+            <Label Grid.Row="0" Grid.Column="0" Text="Name: " VerticalOptions="Center"/>
             <Entry Grid.Row="0" Grid.Column="1" Text="{Binding Name}" HorizontalOptions="FillAndExpand"/>
 
             <Label Grid.Row="1" Grid.Column="0" Text="Address:" VerticalOptions="Center"/>

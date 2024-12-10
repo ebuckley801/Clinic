@@ -28,7 +28,7 @@ namespace Api.Clinic.Database
                 StartTime = new DateTime(2024, 10, 10, 9, 0, 0),
                 EndTime = new DateTime(2024, 10, 10, 10, 0, 0),
                 PatientId = ObjectId.Parse("5a934e000102030405060708"),
-                PhysicianId = 1
+                PhysicianId = ObjectId.Parse("5a934e000102030405060709")
             },
             new Appointment
             {
@@ -36,7 +36,7 @@ namespace Api.Clinic.Database
                 StartTime = new DateTime(2024, 10, 11, 11, 0, 0),
                 EndTime = new DateTime(2024, 10, 11, 12, 0, 0),
                 PatientId = ObjectId.Parse("5a934e000102030405060708"),
-                PhysicianId = 2
+                PhysicianId = ObjectId.Parse("5a934e000102030405060709")
             }
         };
 

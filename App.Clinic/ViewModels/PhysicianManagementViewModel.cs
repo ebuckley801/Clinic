@@ -6,14 +6,14 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-
+using System.Threading.Tasks;
+using MongoDB.Bson;
 namespace App.Clinic.ViewModels
 {
     public class PhysicianManagementViewModel : INotifyPropertyChanged
     {
         public PhysicianManagementViewModel()
         {
-            
             SortChoices = new List<SortChoiceEnum>
             {
                 SortChoiceEnum.NameAscending,
@@ -36,10 +36,7 @@ namespace App.Clinic.ViewModels
         private SortChoiceEnum sortChoice;
         public SortChoiceEnum SortChoice
         { 
-            get
-            {
-                return sortChoice;
-            }
+            get => sortChoice;
             set
             {
                 if (sortChoice != value)
@@ -91,18 +88,18 @@ namespace App.Clinic.ViewModels
             }
         }
 
-        public void Delete()
+        public async Task Delete()
         {
             if (SelectedPhysician == null)
             {
                 return;
             }
-            PhysicianServiceProxy.Current.DeletePhysician(SelectedPhysician.Id);
-            Refresh();
+            PhysicianServiceProxy.Current.DeletePhysician(ObjectId.Parse(SelectedPhysician.Id));
         }
 
-        public void Refresh()
+        public async Task Refresh()
         {
+            await Task.Delay(100);
             NotifyPropertyChanged(nameof(Physicians));
         }
 
@@ -112,7 +109,6 @@ namespace App.Clinic.ViewModels
             {
                 await PhysicianServiceProxy.Current.Search(Query);
             }
-            Refresh();
         }
     }
 }

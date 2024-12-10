@@ -27,7 +27,7 @@ public partial class PhysicianManagement : ContentPage, INotifyPropertyChanged
     private void EditClicked(object sender, EventArgs e)
     {
         var selectedPhysicianId = (BindingContext as PhysicianManagementViewModel)?
-            .SelectedPhysician?.Id ?? 0;
+            .SelectedPhysician?.Id ?? string.Empty;
         Shell.Current.GoToAsync($"//PhysicianDetails?physicianId={selectedPhysicianId}");
     }
 
@@ -49,5 +49,12 @@ public partial class PhysicianManagement : ContentPage, INotifyPropertyChanged
     private void SearchClicked(object sender, EventArgs e)
     {
         (BindingContext as PhysicianManagementViewModel)?.Search();
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

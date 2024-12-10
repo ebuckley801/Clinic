@@ -1,116 +1,20 @@
 using Library.Clinic.DTO;
 using Library.Clinic.Services;
-using Library.Clinic.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using Newtonsoft.Json;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using MongoDB.Bson;
 
 namespace App.Clinic.ViewModels
 {
     public class PhysicianViewModel : INotifyPropertyChanged
     {
-        public PhysicianDTO? Model { get; set; }
         public ICommand? DeleteCommand { get; set; }
         public ICommand? EditCommand { get; set; }
-        public int Id
-        {
-            get
-            {
-                if(Model == null)
-                {
-                    return -1;
-                }
 
-                return Model.Id;
-            }
-
-            set
-            {
-                if(Model != null && Model.Id != value)
-                {
-                    Model.Id = value;
-                }
-            }
-        }
-
-        public string Name
-        {
-            get => Model?.Name ?? string.Empty;
-            set
-            {
-                if(Model != null && Model.Name != value)
-                {
-                    Model.Name = value;
-                }
-            }
-        }
-
-        public string License
-        {
-            get => Model?.License ?? string.Empty;
-            set
-            {
-                if(Model != null && Model.License != value)
-                {
-                    Model.License = value;
-                }
-            }
-        }
-
-        public DateTime? GraduationDate
-        {
-            get => Model?.GraduationDate;
-            set
-            {
-                if(Model != null)
-                {
-                    Model.GraduationDate = value;
-                }
-            }
-        }
-
-        public string Specialty
-        {
-            get => Model?.Specialty ?? string.Empty;
-            set
-            {
-                if(Model != null && Model.Specialty != value)
-                {
-                    Model.Specialty = value;
-                }
-            }
-        }
-
-        public void SetupCommands()
-        {
-            DeleteCommand = new Command(DoDelete);
-            EditCommand = new Command((p) => DoEdit(p as PhysicianViewModel));
-        }
-
-        private void DoDelete()
-        {
-            if(Id > 0)
-            {
-                PhysicianServiceProxy.Current.DeletePhysician(Id);
-                Shell.Current.GoToAsync("//Physicians");
-            }
-        }
-
-        private void DoEdit(PhysicianViewModel? pvm)
-        {
-            if(pvm == null)
-            {
-                return;
-            }
-            var selectedPhysicianId = pvm?.Id ?? 0;
-            Shell.Current.GoToAsync($"//PhysicianDetails?physicianId={selectedPhysicianId}");
-        }
+        public PhysicianDTO Model { get; private set; }
 
         public PhysicianViewModel()
         {
@@ -118,20 +22,105 @@ namespace App.Clinic.ViewModels
             SetupCommands();
         }
 
-        public PhysicianViewModel(PhysicianDTO? _model)
+        public PhysicianViewModel(PhysicianDTO? model)
         {
-            Model = _model;
+            if (model == null)
+            {
+                Model = new PhysicianDTO();
+            }
+            else
+            {
+                var serialized = JsonConvert.SerializeObject(model);
+                Model = JsonConvert.DeserializeObject<PhysicianDTO>(serialized);
+            }
             SetupCommands();
+        }
+
+        public string Name
+        {
+            get => Model.Name ?? string.Empty;
+            set
+            {
+                if (Model.Name != value)
+                {
+                    Model.Name = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string Id
+        {
+            get => Model.Id ?? string.Empty;
+            set
+            {
+                if (Model.Id != value)
+                {
+                    Model.Id = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string License
+        {
+            get => Model.License ?? string.Empty;
+            set
+            {
+                if (Model.License != value)
+                {
+                    Model.License = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public DateTime GraduationDate
+        {
+            get => Model.GraduationDate ?? DateTime.MinValue;
+            set
+            {
+                if (Model.GraduationDate != value)
+                {
+                    Model.GraduationDate = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public async void ExecuteAdd()
         {
-            if(Model != null)
-            {
-                await PhysicianServiceProxy.Current.AddOrUpdatePhysician(Model);
-            }
+            await PhysicianServiceProxy.Current.AddOrUpdatePhysician(Model);
+        }
 
+        public async void Cancel()
+        {
             await Shell.Current.GoToAsync("//Physicians");
+        }
+
+        private void SetupCommands()
+        {
+            DeleteCommand = new Command(DoDelete);
+            EditCommand = new Command((p) => DoEdit(p as PhysicianViewModel));
+        }
+
+        private void DoDelete()
+        {
+            if (!string.IsNullOrEmpty(Id))
+            {
+                PhysicianServiceProxy.Current.DeletePhysician(ObjectId.Parse(Id));
+                Shell.Current.GoToAsync("//Physicians");
+            }
+        }
+
+        private void DoEdit(PhysicianViewModel? pvm)
+        {
+            if (pvm == null)
+            {
+                return;
+            }
+            var selectedPhysicianId = pvm?.Id ?? string.Empty;
+            Shell.Current.GoToAsync($"//PhysicianDetails?physicianId={selectedPhysicianId}");
         }
 
         // INotifyPropertyChanged implementation
@@ -140,6 +129,17 @@ namespace App.Clinic.ViewModels
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public async void NavigatedTo()
+        {
+            await PhysicianServiceProxy.Current.AddOrUpdatePhysician(Model);
+            NotifyPropertyChanged(nameof(Model));
+        }
+
+        public async void Refresh()
+        {
+            NotifyPropertyChanged(nameof(Model));
         }
     }
 }

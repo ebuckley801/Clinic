@@ -21,7 +21,9 @@ namespace Library.Clinic.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public ObjectId PatientId { get; set; }
 
-        public int PhysicianId { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public ObjectId PhysicianId { get; set; }
         public PhysicianDTO? Physician { get; set; }
         public PatientDTO? Patient { get; set; }
 
@@ -31,7 +33,7 @@ namespace Library.Clinic.Models
             StartTime = a.StartTime;
             EndTime = a.EndTime;
             PatientId = ObjectId.Parse(a.PatientId);
-            PhysicianId = a.PhysicianId;
+            PhysicianId = ObjectId.Parse(a.PhysicianId);
             Physician = a.Physician;
             Patient = a.Patient;
         }

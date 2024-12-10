@@ -22,7 +22,7 @@ namespace Library.Clinic.DTO
         public DateTime? EndTime { get; set; }
 
         public string PatientId { get; set; }
-        public int PhysicianId { get; set; }
+        public string PhysicianId { get; set; }
         public PhysicianDTO? Physician { get; set; }
         public PatientDTO? Patient { get; set; }
 
@@ -33,7 +33,7 @@ namespace Library.Clinic.DTO
             StartTime = a.StartTime;
             EndTime = a.EndTime;
             PatientId = a.PatientId.ToString();
-            PhysicianId = a.PhysicianId;
+            PhysicianId = a.PhysicianId.ToString();
             Physician = a.Physician;
             Patient = a.Patient;
         }

@@ -89,7 +89,7 @@ namespace App.Clinic.ViewModels
             if(Model != null)
             {
                 Model.Physician = value;
-                Model.PhysicianId = value?.Id ?? 0;
+                Model.PhysicianId = value?.Id ?? String.Empty;
                 NotifyPropertyChanged();
                 }
             }
@@ -111,7 +111,7 @@ namespace App.Clinic.ViewModels
 
         public string PhysicianName{
             get{
-                if(Model != null && Model.PhysicianId > 0)
+                if(Model != null && !String.IsNullOrEmpty(Model.PhysicianId))
                 {
                     if(Model.Physician != null)
                     {

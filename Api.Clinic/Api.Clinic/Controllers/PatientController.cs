@@ -13,7 +13,6 @@ namespace Api.Clinic.Controllers
     {
         private readonly ILogger<PatientController> _logger;
         private readonly PatientEC _patientEC;
-        private readonly IConfiguration _configuration;
 
         public PatientController(ILogger<PatientController> logger)
         {

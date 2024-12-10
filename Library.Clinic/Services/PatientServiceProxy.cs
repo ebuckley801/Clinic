@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.ComponentModel;
 
 namespace Library.Clinic.Services
 {
@@ -90,11 +91,17 @@ namespace Library.Clinic.Services
                         await new WebRequestHandler().Post("/Patient/Add", patient);
                     }
                 }
-                
+                await RefreshPatients();
                 return patient;
             }
-            
+            await RefreshPatients();
             return null;
+        }
+
+        public async Task RefreshPatients()
+        {
+            var patientsData = await new WebRequestHandler().Get("/Patient");
+            Patients = JsonConvert.DeserializeObject<List<PatientDTO>>(patientsData) ?? new List<PatientDTO>();
         }
 
         public async void DeletePatient(ObjectId id) {
@@ -105,6 +112,7 @@ namespace Library.Clinic.Services
                 Patients.Remove(patientToRemove);
                 await new WebRequestHandler().Delete($"/Patient/{id}");
             }
+            await RefreshPatients();
         }
     }
 }

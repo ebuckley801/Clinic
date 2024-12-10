@@ -53,4 +53,6 @@ public partial class PatientManagement : ContentPage, INotifyPropertyChanged
     {
         (BindingContext as PatientManagementViewModel)?.Search();
     }
+
+    
 }

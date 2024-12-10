@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Library.Clinic.DTO;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace Library.Clinic.Models
 {
     public class Physician
@@ -15,7 +18,8 @@ namespace Library.Clinic.Models
         {
             get => $"[{Id}] {Name}";
         }
-        public int Id { get; set; }
+        [BsonId]
+        public ObjectId Id { get; set; } = ObjectId.GenerateNewId();
         public string? Name { get; set; }
         public string? License { get; set; }
         public DateTime? GraduationDate { get; set; }
@@ -24,7 +28,6 @@ namespace Library.Clinic.Models
 
         public Physician()
         {
-            Id = 0;
             Name = string.Empty;
             License = string.Empty;
             GraduationDate = DateTime.MinValue;
@@ -32,19 +35,16 @@ namespace Library.Clinic.Models
             Appointments = new List<Appointment>();
         }
 
-        public Physician(string name, string license, DateTime graduationDate, string specialty, List<Appointment> appointments)
-        {
-            Name = name;
-            License = license;
-            GraduationDate = graduationDate;
-            Specialty = specialty;
-            Appointments = appointments;
-            Id = 0;
-        }
-
         public Physician(PhysicianDTO p)
         {
-            Id = p.Id;
+            if(p.Id != "0")
+            {
+                Id = ObjectId.Parse(p.Id);
+            }
+            else
+            {
+                Id = ObjectId.GenerateNewId();
+            }
             Name = p.Name;
             License = p.License;
             GraduationDate = p.GraduationDate;

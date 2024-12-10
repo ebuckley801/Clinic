@@ -1,50 +1,46 @@
 using App.Clinic.ViewModels;
 using Library.Clinic.Services;
-using Library.Clinic.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-
-namespace App.Clinic.Views;
-
-[QueryProperty(nameof(PhysicianId), "physicianId")]
-public partial class PhysicianView : ContentPage
+namespace App.Clinic.Views
 {
-    public PhysicianView()
+    [QueryProperty(nameof(PhysicianId), "physicianId")]
+    public partial class PhysicianView : ContentPage
     {
-        InitializeComponent();
-        BindingContext = new PhysicianViewModel();
-    }
-    public int PhysicianId { get; set; }
-
-    private void CancelClicked(object sender, EventArgs e)
-    {
-        Shell.Current.GoToAsync("//Physicians");
-    }
-
-    private void AddClicked(object sender, EventArgs e)
-    {
-        (BindingContext as PhysicianViewModel)?.ExecuteAdd();
-    }
-
-    private void PhysicianView_NavigatedTo(object sender, NavigatedToEventArgs e)
-    {
-        if(PhysicianId > 0)
+        public PhysicianView()
         {
-            var model = PhysicianServiceProxy.Current.Physicians.FirstOrDefault(p => p.Id == PhysicianId);
-            if(model != null)
-            {
-                BindingContext = new PhysicianViewModel(model);
-            } else
-            {
-                BindingContext = new PhysicianViewModel();
-            }
-        } else
-        {
+            InitializeComponent();
             BindingContext = new PhysicianViewModel();
+        }
+
+        public string PhysicianId { get; set; } = "0";
+
+        private void CancelClicked(object sender, EventArgs e)
+        {
+            Shell.Current.GoToAsync("//Physicians");
+        }
+
+        private async void AddClicked(object sender, EventArgs e)
+        {
+            (BindingContext as PhysicianViewModel)?.ExecuteAdd();
+            await Shell.Current.GoToAsync("//Physicians");
+        }
+
+        private void PhysicianView_NavigatedTo(object sender, NavigatedToEventArgs e)
+        {
+            if (PhysicianId != "0")
+            {
+                var model = PhysicianServiceProxy.Current
+                    .Physicians.FirstOrDefault(p => p.Id == PhysicianId);
+                BindingContext = model != null 
+                    ? new PhysicianViewModel(model) 
+                    : new PhysicianViewModel(null);
+            }
+            else
+            {
+                BindingContext = new PhysicianViewModel(null);
+            }
         }
     }
 }

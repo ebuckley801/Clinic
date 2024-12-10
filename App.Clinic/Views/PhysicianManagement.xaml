@@ -26,8 +26,7 @@
                                 <ColumnDefinition/>
                                 <ColumnDefinition/>
                             </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Text="{Binding Id}"/>
-                            <Label Grid.Column="1" Text="{Binding Name}"/>
+                            <Label FontAttributes="Bold" Grid.Column="0" Text="{Binding Name}"/>
                             <Button Grid.Column="2" Text="Edit" Command="{Binding EditCommand}" CommandParameter="{Binding}"/>
                             <Button Grid.Column="3" Text="Delete" Command="{Binding DeleteCommand}" Clicked="RefreshClicked"/>
                         </Grid>
@@ -35,9 +34,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Button Text="Add" Clicked="AddClicked"/>
-        <Button Text="Edit" Clicked="EditClicked"/>
-        <Button Text="Delete" Clicked="DeleteClicked"/>
-        <Button Text="Cancel" Clicked="CancelClicked"/>
+        <Button Text="Add" Command="{Binding AddCommand}" Clicked="AddClicked"/>
+        <Button Text="Cancel" Clicked="CancelClicked" />
     </VerticalStackLayout>
 </ContentPage>
